@@ -62,37 +62,229 @@ footer{text-align:center;color:#b39a5b;font-size:11px;line-height:1.7;margin:25p
 </section>
 <footer>ढाणी वोट • लाखानियो की ढाणी<br>निष्पक्ष चर्चा और सम्मानजनक संवाद बनाए रखें।</footer>
 </div><div class="toast" id="toast"></div>
-<script>
-const names=[
-"रेवती चौधरी / राहुल जी जांदू",
-"सीरियो देवी / दलाराम जी सारण",
-"हवा देवी / वगताराम जी दर्जी",
-"केसर देवी / मोहनजी",
-"प्रेम देवी / भंवरलाल जी सोलंकी",
-"रेशमी / माणकचंदजी",
-"हरिसिंह जी आयस",
-"हीराराम नेहरा"
-];
-const KEY="dhaaniVote2026_v1";
-let state; try{state=JSON.parse(localStorage.getItem(KEY))||{votes:{}}}catch(e){state={votes:{}}}
-let selected=null;
-function save(){localStorage.setItem(KEY,JSON.stringify(state))}
-function notify(msg){const t=document.getElementById("toast");t.textContent=msg;t.style.display="block";setTimeout(()=>t.style.display="none",2600)}
-function renderCandidates(){
- const el=document.getElementById("candidates");el.innerHTML="";
- names.forEach((name,i)=>{const card=document.createElement("button");card.type="button";card.className="candidate"+(selected===i?" selected":"");card.setAttribute("aria-pressed",selected===i?"true":"false");
- card.innerHTML=`<span class="radio"></span><span class="person"><h4>${name}</h4><p>उम्मीदवार ${i+1}</p></span><span class="choose">${selected===i?"चुना गया":"चुनें"}</span>`;
- card.addEventListener("click",()=>{selected=i;renderCandidates();document.getElementById("voteBtn").disabled=false});el.appendChild(card)});
-}
-function renderResults(){let total=names.reduce((s,n,i)=>s+(state.votes[i]||0),0);let el=document.getElementById("results");el.innerHTML="";
- names.forEach((n,i)=>{let count=state.votes[i]||0,pct=total?Math.round(count/total*100):0;let row=document.createElement("div");row.className="resultrow";row.innerHTML=`<div class="resultlabel"><span>${n}</span><span>${count} वोट • ${pct}%</span></div><div class="bar"><div class="fill" style="width:${pct}%"></div></div>`;el.appendChild(row)});
- document.getElementById("totalVotes").textContent="कुल वोट: "+total;
-}
-document.getElementById("voteBtn").addEventListener("click",()=>{if(selected===null)return; state.votes[selected]=(state.votes[selected]||0)+1;save();renderResults();notify("आपका वोट इस डिवाइस के ब्राउज़र में दर्ज हो गया।")});
-document.getElementById("shareBtn").addEventListener("click",()=>{const text="लाखानियो की ढाणी लाखानियो की ढाणी — सामान्य महिला सीट के जनमत पोल में अपनी राय दें।\\nयह अनौपचारिक सामुदायिक पोल है।";if(navigator.share)navigator.share({title:"ढाणी वोट",text:text,url:location.href}).catch(()=>{});else window.open("https://wa.me/?text="+encodeURIComponent(text+" "+location.href),"_blank")});
-document.getElementById("addOption").addEventListener("click",()=>{let box=document.getElementById("optionInputs");if(box.children.length>=6){notify("अधिकतम 6 विकल्प जोड़ सकते हैं।");return}let input=document.createElement("input");input.className="field pollOption";input.maxLength=70;input.placeholder="विकल्प "+(box.children.length+1);box.appendChild(input)});
-document.getElementById("createPoll").addEventListener("click",()=>{let q=document.getElementById("pollQuestion").value.trim(),opts=[...document.querySelectorAll(".pollOption")].map(x=>x.value.trim()).filter(Boolean);if(!q||opts.length<2){notify("सवाल और कम-से-कम 2 विकल्प भरें।");return}let box=document.getElementById("createdPoll");box.innerHTML="";let h=document.createElement("h4");h.textContent=q;box.appendChild(h);opts.forEach(o=>{let b=document.createElement("button");b.className="btn secondary";b.style.width="100%";b.style.marginTop="6px";b.textContent="○ "+o;b.onclick=()=>{notify("यह नमूना पोल है; साझा वोटिंग के लिए ऑनलाइन डेटाबेस चाहिए।")};box.appendChild(b)});notify("आपका नमूना पोल बन गया।")});
-renderCandidates();renderResults();
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+import {
+  getAuth,
+  signInAnonymously
+} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+import {
+  getFirestore,
+  collection,
+  doc,
+  setDoc,
+  onSnapshot,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
+const firebaseConfig = {
+  apiKey: "AIzaSyAIn_0_XcLx02H47tV2Fd569EoLSd4qV_c",
+  authDomain: "dhaani-vote.firebaseapp.com",
+  projectId: "dhaani-vote",
+  storageBucket: "dhaani-vote.firebasestorage.app",
+  messagingSenderId: "278284447842",
+  appId: "1:278284447842:web:50c4e6c92c24220926e13b",
+  measurementId: "G-2149KZB1PX"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const names = [
+  "रेवती चौधरी / राहुल जी जांदू",
+  "सीरियो देवी / दलाराम जी सारण",
+  "हवा देवी / वगताराम जी दर्जी",
+  "केसर देवी / मोहनजी",
+  "प्रेम देवी / भंवरलाल जी सोलंकी",
+  "रेशमी / माणकचंदजी",
+  "हरिसिंह जी आयस",
+  "हीराराम नेहरा"
+];
+
+let selected = null;
+let alreadyVoted = false;
+let voteCounts = Array(8).fill(0);
+
+function notify(message) {
+  const toast = document.getElementById("toast");
+  toast.textContent = message;
+  toast.style.display = "block";
+  setTimeout(() => toast.style.display = "none", 3000);
+}
+
+function renderCandidates() {
+  const container = document.getElementById("candidates");
+  container.innerHTML = "";
+
+  names.forEach((name, i) => {
+    const card = document.createElement("button");
+    card.type = "button";
+    card.className = "candidate" + (selected === i ? " selected" : "");
+    card.innerHTML = `
+      <span class="radio"></span>
+      <span class="person">
+        <h4>${name}</h4>
+        <p>उम्मीदवार ${i + 1}</p>
+      </span>
+      <span class="choose">${selected === i ? "चुना गया" : "चुनें"}</span>
+    `;
+
+    card.onclick = () => {
+      if (alreadyVoted) {
+        notify("आप इस ब्राउज़र से पहले ही वोट दे चुके हैं।");
+        return;
+      }
+      selected = i;
+      renderCandidates();
+      document.getElementById("voteBtn").disabled = false;
+    };
+
+    container.appendChild(card);
+  });
+}
+
+function renderResults() {
+  const total = voteCounts.reduce((a, b) => a + b, 0);
+  const results = document.getElementById("results");
+  results.innerHTML = "";
+
+  names.forEach((name, i) => {
+    const count = voteCounts[i];
+    const percent = total ? Math.round(count * 100 / total) : 0;
+    const row = document.createElement("div");
+    row.className = "resultrow";
+    row.innerHTML = `
+      <div class="resultlabel">
+        <span>${name}</span>
+        <span>${count} वोट • ${percent}%</span>
+      </div>
+      <div class="bar">
+        <div class="fill" style="width:${percent}%"></div>
+      </div>
+    `;
+    results.appendChild(row);
+  });
+
+  document.getElementById("totalVotes").textContent = "कुल वोट: " + total;
+}
+
+async function startVoting() {
+  try {
+    await signInAnonymously(auth);
+
+    onSnapshot(collection(db, "votes"), snapshot => {
+      voteCounts = Array(8).fill(0);
+      alreadyVoted = false;
+
+      snapshot.forEach(vote => {
+        const data = vote.data();
+        if (Number.isInteger(data.candidateId) &&
+            data.candidateId >= 0 &&
+            data.candidateId < 8) {
+          voteCounts[data.candidateId]++;
+        }
+
+        if (auth.currentUser && vote.id === auth.currentUser.uid) {
+          alreadyVoted = true;
+        }
+      });
+
+      document.getElementById("voteBtn").disabled =
+        alreadyVoted || selected === null;
+
+      renderCandidates();
+      renderResults();
+    }, error => {
+      console.error(error);
+      notify("वोटों के परिणाम लोड नहीं हो सके। Firebase Rules जाँचें।");
+    });
+  } catch (error) {
+    console.error(error);
+    notify("Firebase कनेक्शन नहीं हुआ। Authentication जाँचें।");
+  }
+}
+
+document.getElementById("voteBtn").addEventListener("click", async () => {
+  if (selected === null || !auth.currentUser || alreadyVoted) return;
+
+  const button = document.getElementById("voteBtn");
+  button.disabled = true;
+
+  try {
+    await setDoc(doc(db, "votes", auth.currentUser.uid), {
+      candidateId: selected,
+      createdAt: serverTimestamp()
+    });
+
+    alreadyVoted = true;
+    notify("आपका वोट दर्ज हो गया!");
+  } catch (error) {
+    console.error(error);
+    button.disabled = false;
+    notify("वोट सेव नहीं हुआ। Firebase Rules जाँचें।");
+  }
+});
+
+document.getElementById("shareBtn").addEventListener("click", () => {
+  const text = "लाखानियो की ढाणी के अनौपचारिक जनमत पोल में अपनी राय दें।";
+  const url = location.href;
+
+  if (navigator.share) {
+    navigator.share({ title: "ढाणी वोट", text, url }).catch(() => {});
+  } else {
+    window.open(
+      "https://wa.me/?text=" + encodeURIComponent(text + " " + url),
+      "_blank"
+    );
+  }
+});
+
+document.getElementById("addOption").addEventListener("click", () => {
+  const box = document.getElementById("optionInputs");
+
+  if (box.children.length >= 6) {
+    notify("अधिकतम 6 विकल्प जोड़ सकते हैं।");
+    return;
+  }
+
+  const input = document.createElement("input");
+  input.className = "field pollOption";
+  input.maxLength = 70;
+  input.placeholder = "विकल्प " + (box.children.length + 1);
+  box.appendChild(input);
+});
+
+document.getElementById("createPoll").addEventListener("click", () => {
+  const question = document.getElementById("pollQuestion").value.trim();
+  const options = [...document.querySelectorAll(".pollOption")]
+    .map(input => input.value.trim())
+    .filter(Boolean);
+
+  if (!question || options.length < 2) {
+    notify("सवाल और कम-से-कम 2 विकल्प भरें।");
+    return;
+  }
+
+  const box = document.getElementById("createdPoll");
+  box.innerHTML = "";
+
+  const heading = document.createElement("h4");
+  heading.textContent = question;
+  box.appendChild(heading);
+
+  options.forEach(option => {
+    const item = document.createElement("p");
+    item.textContent = "• " + option;
+    box.appendChild(item);
+  });
+
+  notify("नमूना पोल बन गया। यह अलग से साझा वोटिंग नहीं है।");
+});
+
+renderCandidates();
+renderResults();
+document.getElementById("voteBtn").disabled = true;
+startVoting();
 </script>
 </body></html>
