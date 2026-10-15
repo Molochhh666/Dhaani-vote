@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#090909">
+<title>ढाणी वोट | लाखानियो की ढाणी</title>
+<style>
+:root{--bg:#050505;--panel:#101010;--panel2:#17130a;--gold:#e0bd63;--gold2:#ffe7a0;--muted:#c2ad78;--line:#5a4721;--green:#2d9b69}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#241b08 0%,#090909 48%,#030303 100%);color:var(--gold2);font-family:system-ui,-apple-system,"Noto Sans Devanagari","Mangal",sans-serif;min-height:100vh}
+.wrap{max-width:780px;margin:auto;padding:18px 14px 42px}.top{display:flex;align-items:center;gap:12px;padding:10px 2px 20px;border-bottom:1px solid var(--line)}
+.logo{height:52px;width:52px;border-radius:16px;display:grid;place-items:center;background:linear-gradient(135deg,#f5df9a,#9b7422);color:#17120a;font-size:25px;font-weight:900;box-shadow:0 0 25px #d7b45a25}
+.brand{flex:1}.brand h1{font-size:20px;margin:0;color:var(--gold2);letter-spacing:.3px}.brand p{margin:3px 0 0;font-size:12px;color:var(--muted)}.badge{font-size:11px;color:var(--gold2);border:1px solid #6f592a;border-radius:20px;padding:6px 9px;white-space:nowrap}
+.hero{padding:28px 4px 22px}.eyebrow{color:var(--gold);font-size:12px;letter-spacing:1.7px;font-weight:800}.hero h2{font-size:clamp(27px,6vw,40px);line-height:1.25;margin:10px 0 9px}.hero h2 span{color:var(--gold2)}.hero p{color:#c3beb1;line-height:1.7;margin:0;font-size:14px}
+.notice{background:#d7b45a12;border:1px solid #9a792c55;color:#d8ceb4;padding:12px 14px;border-radius:13px;font-size:12px;line-height:1.65;margin-bottom:22px}
+.sectionhead{display:flex;align-items:end;justify-content:space-between;gap:10px;margin:20px 0 13px}.sectionhead h3{margin:0;font-size:19px;color:var(--gold2)}.sectionhead span{font-size:12px;color:var(--muted)}
+.candidates{display:grid;gap:12px}.candidate{border:1px solid var(--line);border-radius:17px;padding:15px;background:linear-gradient(135deg,#191919,#111);display:flex;gap:13px;align-items:center;transition:.2s}.candidate.selected{border-color:var(--gold);background:linear-gradient(135deg,#2a2416,#15130f);box-shadow:0 0 0 1px #d7b45a18}
+.radio{width:23px;height:23px;flex-shrink:0;border:2px solid #777;border-radius:50%;display:grid;place-items:center}.selected .radio{border-color:var(--gold)}.selected .radio:after{content:"";height:11px;width:11px;border-radius:50%;background:var(--gold)}
+.person{flex:1;min-width:0}.person h4{margin:0;font-size:17px;font-weight:700;color:var(--gold2)}.person p{margin:4px 0 0;font-size:11px;color:var(--muted)}.choose{border:1px solid #5d4b27;border-radius:10px;background:#211b0e;color:var(--gold2);padding:8px 10px;font:inherit;font-size:12px;white-space:nowrap}.selected .choose{background:var(--gold);color:#161108;border-color:var(--gold);font-weight:800}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}.btn{border:0;border-radius:12px;padding:13px 12px;font:inherit;font-weight:800;cursor:pointer}.primary{background:linear-gradient(135deg,#f5df9a,#b88b2d);color:#181207}.secondary{background:#1b1b1b;color:#e8d7a8;border:1px solid var(--line)}button:disabled{opacity:.45;cursor:not-allowed}
+.results{margin-top:27px;padding:17px;border:1px solid var(--line);border-radius:17px;background:#101010}.results h3{margin:0 0 5px;color:var(--gold2)}.sub{font-size:12px;color:var(--muted);margin:0 0 16px}.resultrow{margin:13px 0}.resultlabel{display:flex;justify-content:space-between;gap:8px;font-size:13px;margin-bottom:7px;color:var(--gold2)}.bar{height:8px;background:#2a2a2a;border-radius:20px;overflow:hidden}.fill{height:100%;width:0;background:linear-gradient(90deg,#9b7422,#f5df9a);border-radius:20px;transition:width .4s}.resultfoot{color:var(--muted);font-size:11px;margin-top:14px}
+.create{margin-top:18px;padding:17px;border:1px solid var(--line);border-radius:17px;background:#141414}.create h3{margin:0 0 5px;color:var(--gold2)}.create p{color:var(--muted);font-size:12px;line-height:1.5}.field{width:100%;background:#090909;border:1px solid #6b5426;color:var(--gold2);padding:12px;border-radius:10px;font:inherit;margin:7px 0}.options{display:grid;gap:7px}.small{font-size:11px;color:var(--muted)}
+footer{text-align:center;color:#b39a5b;font-size:11px;line-height:1.7;margin:25px 5px 0}.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#f5df9a;color:#17120a;padding:12px 18px;border-radius:12px;font-size:13px;font-weight:800;box-shadow:0 8px 30px #0008;display:none;max-width:90%;z-index:5}
+@media(min-width:600px){.candidates{grid-template-columns:1fr 1fr}.candidate{padding:17px 13px}.person h4{font-size:16px}} 
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+ <div class="logo">ढा</div>
+ <div class="brand"><h1>ढाणी वोट</h1><p>लाखानियो की ढाणी • जनमत मंच</p></div>
+ <div class="badge">सीट: सामान्य महिला</div>
+</header>
+<section class="hero">
+ <div class="eyebrow">आपकी आवाज़ • आपका चुनाव</div>
+ <h2>लाखानियो की ढाणी<br><span>सरपंच जनमत पोल</span></h2>
+ <p>अपने पसंदीदा उम्मीदवार को चुनें और गाँव के भविष्य को लेकर अपनी राय दर्ज करें।</p>
+</section>
+<div class="notice">⚠️ <b>महत्वपूर्ण:</b> यह केवल अनौपचारिक सामुदायिक जनमत पोल है। यह सरकारी या आधिकारिक सरपंच चुनाव की वोटिंग नहीं है। इस डेमो में वोट इसी ब्राउज़र में सेव होते हैं; अलग-अलग मोबाइल के वोट आपस में साझा नहीं होते। खुली वोटिंग में कोई भी व्यक्ति वोट दे सकता है।</div>
+
+<div class="sectionhead"><h3>उम्मीदवार चुनें</h3><span id="candidateCount">8 उम्मीदवार</span></div>
+<div class="candidates" id="candidates"></div>
+<div class="actions">
+ <button class="btn primary" id="voteBtn" disabled>🗳️ अपना वोट दें</button>
+ <button class="btn secondary" id="shareBtn">↗ WhatsApp पर शेयर करें</button>
+</div>
+<section class="results">
+ <h3>📊 जनमत के परिणाम</h3><p class="sub">इस डिवाइस पर दर्ज किए गए वोटों के आधार पर</p>
+ <div id="results"></div><div class="resultfoot" id="totalVotes">कुल वोट: 0</div>
+</section>
+<section class="create">
+ <h3>＋ नया जनमत पोल बनाएँ</h3>
+ <p>समुदाय के सदस्य यहाँ एक सामान्य सवाल और विकल्पों वाला स्थानीय पोल बना सकते हैं। यह सुविधा इसी डिवाइस पर काम करती है।</p>
+ <input id="pollQuestion" class="field" maxlength="120" placeholder="पोल का सवाल लिखें">
+ <div id="optionInputs" class="options">
+  <input class="field pollOption" maxlength="70" placeholder="विकल्प 1">
+  <input class="field pollOption" maxlength="70" placeholder="विकल्प 2">
+ </div>
+ <button class="btn secondary" id="addOption">＋ विकल्प जोड़ें</button>
+ <button class="btn primary" id="createPoll" style="width:100%;margin-top:9px">पोल बनाएँ</button>
+ <div id="createdPoll" aria-live="polite"></div>
+</section>
+<footer>ढाणी वोट • लाखानियो की ढाणी<br>निष्पक्ष चर्चा और सम्मानजनक संवाद बनाए रखें।</footer>
+</div><div class="toast" id="toast"></div>
+<script>
+const names=[
+"रेवती चौधरी / राहुल जी जांदू",
+"सीरियो देवी / दलाराम जी सारण",
+"हवा देवी / वगताराम जी दर्जी",
+"केसर देवी / मोहनजी",
+"प्रेम देवी / भंवरलाल जी सोलंकी",
+"रेशमी / माणकचंदजी",
+"हरिसिंह जी आयस",
+"हीराराम नेहरा"
+];
+const KEY="dhaaniVote2026_v1";
+let state; try{state=JSON.parse(localStorage.getItem(KEY))||{votes:{}}}catch(e){state={votes:{}}}
+let selected=null;
+function save(){localStorage.setItem(KEY,JSON.stringify(state))}
+function notify(msg){const t=document.getElementById("toast");t.textContent=msg;t.style.display="block";setTimeout(()=>t.style.display="none",2600)}
+function renderCandidates(){
+ const el=document.getElementById("candidates");el.innerHTML="";
+ names.forEach((name,i)=>{const card=document.createElement("button");card.type="button";card.className="candidate"+(selected===i?" selected":"");card.setAttribute("aria-pressed",selected===i?"true":"false");
+ card.innerHTML=`<span class="radio"></span><span class="person"><h4>${name}</h4><p>उम्मीदवार ${i+1}</p></span><span class="choose">${selected===i?"चुना गया":"चुनें"}</span>`;
+ card.addEventListener("click",()=>{selected=i;renderCandidates();document.getElementById("voteBtn").disabled=false});el.appendChild(card)});
+}
+function renderResults(){let total=names.reduce((s,n,i)=>s+(state.votes[i]||0),0);let el=document.getElementById("results");el.innerHTML="";
+ names.forEach((n,i)=>{let count=state.votes[i]||0,pct=total?Math.round(count/total*100):0;let row=document.createElement("div");row.className="resultrow";row.innerHTML=`<div class="resultlabel"><span>${n}</span><span>${count} वोट • ${pct}%</span></div><div class="bar"><div class="fill" style="width:${pct}%"></div></div>`;el.appendChild(row)});
+ document.getElementById("totalVotes").textContent="कुल वोट: "+total;
+}
+document.getElementById("voteBtn").addEventListener("click",()=>{if(selected===null)return; state.votes[selected]=(state.votes[selected]||0)+1;save();renderResults();notify("आपका वोट इस डिवाइस के ब्राउज़र में दर्ज हो गया।")});
+document.getElementById("shareBtn").addEventListener("click",()=>{const text="लाखानियो की ढाणी लाखानियो की ढाणी — सामान्य महिला सीट के जनमत पोल में अपनी राय दें।\\nयह अनौपचारिक सामुदायिक पोल है।";if(navigator.share)navigator.share({title:"ढाणी वोट",text:text,url:location.href}).catch(()=>{});else window.open("https://wa.me/?text="+encodeURIComponent(text+" "+location.href),"_blank")});
+document.getElementById("addOption").addEventListener("click",()=>{let box=document.getElementById("optionInputs");if(box.children.length>=6){notify("अधिकतम 6 विकल्प जोड़ सकते हैं।");return}let input=document.createElement("input");input.className="field pollOption";input.maxLength=70;input.placeholder="विकल्प "+(box.children.length+1);box.appendChild(input)});
+document.getElementById("createPoll").addEventListener("click",()=>{let q=document.getElementById("pollQuestion").value.trim(),opts=[...document.querySelectorAll(".pollOption")].map(x=>x.value.trim()).filter(Boolean);if(!q||opts.length<2){notify("सवाल और कम-से-कम 2 विकल्प भरें।");return}let box=document.getElementById("createdPoll");box.innerHTML="";let h=document.createElement("h4");h.textContent=q;box.appendChild(h);opts.forEach(o=>{let b=document.createElement("button");b.className="btn secondary";b.style.width="100%";b.style.marginTop="6px";b.textContent="○ "+o;b.onclick=()=>{notify("यह नमूना पोल है; साझा वोटिंग के लिए ऑनलाइन डेटाबेस चाहिए।")};box.appendChild(b)});notify("आपका नमूना पोल बन गया।")});
+renderCandidates();renderResults();
+
+</script>
+</body></html>
